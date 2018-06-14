@@ -8,6 +8,12 @@
 
 #include "binder.h"
 
+typedef struct
+{
+	void (*on)(void);
+	void (*off)(void);
+} LED_INFO;
+
 int svcmgr_publish(struct binder_state *bs, uint32_t target, const char *name, void *ptr)
 {
     int status;
@@ -36,10 +42,18 @@ int my_handler(struct binder_state *bs,
                               struct binder_io *reply)
 {
 	printf("my_handler %p %p %p %p\n", bs, txn, msg, reply);
+	LED_INFO *Led = (LED_INFO*)txn->target.ptr;
 	switch(txn->code) {
 		case 1:
-			printf("Server : LED_ON, %p\n", (void*)txn->target.ptr);
-			return 0;
+			{
+				Led->on();
+				return 0;
+			}
+		case 2:
+			{
+				Led->off();
+				return 0;
+			}
 
 		default:
 			printf("unknown code %d\n", txn->code);
@@ -50,22 +64,33 @@ int my_handler(struct binder_state *bs,
 	return 0;
 }
 
-unsigned token;
+void ledOn(void)
+{
+	printf("Server : ledOn\n");
+}
 
+void ledOff(void)
+{
+	printf("Server : ledOff\n");
+}
 
 int main(int argc, char **argv)
 {
 	struct binder_state *bs;
 	uint32_t svcmgr = BINDER_SERVICE_MANAGER;
+	LED_INFO *Led;
 
 	bs = binder_open("/dev/binder", 128*1024);
 	if (!bs) {
 		fprintf(stderr, "failed to open binder driver\n");
 		return -1;
 	}
+	Led = (LED_INFO*)malloc( sizeof(LED_INFO) );
+	Led->on = ledOn;
+	Led->off = ledOff;
 
-	printf("Server : &token = %p\n", &token );
-	svcmgr_publish(bs, svcmgr, argv[argc-1], &token);
+	printf("Server : &token = %p\n", Led );
+	svcmgr_publish(bs, svcmgr, argv[argc-1], Led);
 	binder_loop(bs, my_handler);
 	return 0;
 }
