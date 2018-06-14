@@ -1,5 +1,5 @@
 cc_binary {
-    name: "my_server_cpp_1",
+    name: "my_server_cpp_2",
     shared_libs: ["liblog", "libutils", "libbinder"],
     srcs: [
         "my_server.cpp",
@@ -7,9 +7,10 @@ cc_binary {
 }
 
 cc_binary {
-    name: "my_client_cpp_1",
+    name: "my_client_cpp_2",
     shared_libs: ["liblog", "libutils", "libbinder"],
     srcs: [
         "my_client.cpp",
+        "ILedService.cpp",
     ],
 }
