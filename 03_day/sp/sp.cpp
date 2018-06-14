@@ -1,6 +1,74 @@
 #if 1
 #include <stdio.h>
 
+class RefBase
+{
+	int mRefs;
+	public:
+		RefBase():mRefs(0) { printf("RefBase::RefBase()\n"); }
+		virtual ~RefBase() { printf("RefBase::~RefBase()\n"); }
+		void incStrong() { 
+			printf("RefBase::incStrong() : mRefs=%d\n", ++mRefs); 
+		}
+		void decStrong() 
+		{ 
+			--mRefs;
+			printf("RefBase::decStrong() : mRefs=%d\n", mRefs); 
+			if( mRefs == 0 )
+				delete this;
+		}
+};
+class AAA : public virtual RefBase
+{
+	public:
+		AAA(){ printf("AAA::AAA()\n"); }
+		~AAA() { printf("AAA::~AAA()\n"); }
+		void foo() { printf("AAA::foo()\n"); }
+};
+
+template < typename T >
+class sp
+{
+	T *mPtr;
+	public:
+		sp( T *ptr):mPtr(ptr) { 
+			printf("sp::sp(T)\n"); 
+			mPtr->incStrong();
+		}
+		sp( const sp<T> &r ) : mPtr(r.mPtr) { 
+			printf("sp::sp(sp<T>)\n"); 
+			mPtr->incStrong();
+		}
+
+		~sp() { 
+			printf("sp::~sp()\n"); 
+			mPtr->decStrong();
+		}
+
+		T * operator->()
+		{
+			return mPtr;
+		}
+		T operator*()
+		{
+			return *mPtr;
+		}
+};
+
+int main()
+{
+	{
+		sp<AAA> p1 = new AAA;
+		sp<AAA> p2 = p1;
+		p1->foo();  
+		p2->foo();  
+	}
+	return 0;
+}
+#endif
+#if 0
+#include <stdio.h>
+
 class AAA
 {
 	int mRefs;
