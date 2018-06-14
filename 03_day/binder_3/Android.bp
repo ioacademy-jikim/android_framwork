@@ -1,0 +1,7 @@
+cc_binary {
+    name: "my_server_cpp_1",
+    shared_libs: ["liblog", "libutils", "libbinder"],
+    srcs: [
+        "my_server.cpp",
+    ],
+}
