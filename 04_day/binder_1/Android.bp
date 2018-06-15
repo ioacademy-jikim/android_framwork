@@ -1,0 +1,35 @@
+cc_defaults {
+    name: "my_flags_2",
+
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+    product_variables: {
+        binder32bit: {
+            cflags: ["-DBINDER_IPC_32BIT=1"],
+        },
+    },
+
+    shared_libs: ["liblog"],
+}
+
+cc_binary {
+    name: "my_server_2",
+    defaults: ["my_flags_2"],
+    srcs: [
+        "my_server.c",
+        "binder.c",
+    ],
+}
+
+cc_binary {
+    name: "my_client_2",
+    defaults: ["my_flags_2"],
+    srcs: [
+        "my_client.c",
+        "binder.c",
+    ],
+}
+

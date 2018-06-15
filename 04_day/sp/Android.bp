@@ -1,0 +1,7 @@
+cc_binary {
+    name: "my_wp",
+    shared_libs: ["liblog", "libutils"],
+    srcs: [
+        "wp_1.cpp",
+    ],
+}
