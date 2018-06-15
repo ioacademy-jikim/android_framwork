@@ -1,8 +1,8 @@
 cc_binary {
-    name: "my_thread_1",
+    name: "my_ipc",
     shared_libs: ["liblog", "libutils", "libbinder"],
     srcs: [
-        "Thread.cpp",
+        "IPCThreadState.cpp",
     ],
 }
 
