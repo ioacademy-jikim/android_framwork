@@ -1,3 +1,40 @@
+#if 0
+#include <stdio.h>
+#include <utils/Thread.h>
+#include <utils/StrongPointer.h>
+
+using namespace android;
+//--------------------------------------------------------
+class AAA  : public RefBase
+{
+	int ratio=0;
+	public:
+		AAA()
+		{
+			printf("AAA::AAA()\n");
+		}
+		void onFirstRef()
+		{
+			ratio = 100;
+			printf("AAA::onFirstRef()\n");
+		}
+
+		bool foo(void)
+		{
+			printf("AAA::foo()\n");
+			return false;
+		}
+};
+int main()
+{
+	sp<AAA> pa = new AAA;
+	//AAA *pa = new AAA;
+	pa->foo();
+	//delete pa;
+	return 0;
+}
+#endif
+
 #if 1
 #include <stdio.h>
 #include <utils/Thread.h>
@@ -9,11 +46,26 @@ class MyThread : public Thread
 {
 	int volume;
 public:
+	MyThread()
+	{
+		printf("MyThread::MyThread()\n");
+	}
+	void onFirstRef()
+	{
+		printf("MyThread::onFirstRef()\n");
+	}
+	status_t readyToRun()
+	{
+		printf("MyThread::readyToRun()\n");
+		return NO_ERROR;
+	}
+
 	bool threadLoop(void)
 	{
 		volume=100;
 		printf("MyThread::threadLoop(), volume=%d\n", volume);
-		return false;
+		sleep(1);
+		return true;
 	}
 };
 int main()
